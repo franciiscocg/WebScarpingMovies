@@ -1,0 +1,3 @@
+pip install selenium
+pip install lxml
+pip install requests
