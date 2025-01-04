@@ -26,9 +26,9 @@ class Usuario(models.Model):
     class Meta:
         ordering = ('idUsuario', )
 
-class Categoria(models.Model):
-    idCategoria = models.TextField(primary_key=True)
-    nombre = models.TextField(verbose_name='Categoría')
+class Genero(models.Model):
+    idGenero = models.TextField(primary_key=True)
+    nombre = models.TextField(verbose_name='Genero')
 
     def __str__(self):
         return self.nombre
@@ -36,19 +36,33 @@ class Categoria(models.Model):
     class Meta:
         ordering =('nombre', )
 
+class Idioma(models.Model):
+    idIdioma = models.TextField(primary_key=True)
+    nombre = models.TextField(verbose_name='Idioma')
+
+    def __str__(self):
+        return self.nombre
+    
+    class Meta:
+        ordering = ('nombre', )
+
 class Pelicula(models.Model):
-    idPelicula = models.TextField(primary_key=True)
-    titulo = models.TextField(verbose_name='Título')
-    fechaEstreno = models.DateField(verbose_name='Fecha de Estreno', null=True)
-    imdbUrl = models.URLField(verbose_name='URL en IMDB')
-    categorias = models.ManyToManyField(Categoria)
+    idPelicula = models.AutoField(primary_key=True)
+    titulo = models.TextField()
+    imagen = models.URLField()
+    descripcion = models.TextField()
+    nota = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(10)])
+    generos = models.ManyToManyField(Genero)
+    date = models.DateField()
+    link = models.URLField()
+    idiomas = models.ManyToManyField(Idioma)
     puntuaciones = models.ManyToManyField(Usuario, through='Puntuacion')
 
     def __str__(self):
         return self.titulo
     
     class Meta:
-        ordering = ('titulo', 'fechaEstreno', )
+        ordering = ('titulo', 'date', )
 
 class Puntuacion(models.Model):
     PUNTUACIONES = ((1, 'Muy mala'), (2,'Mala'), (3,'Regular'), (4,'Buena'), (5,'Muy Buena'))

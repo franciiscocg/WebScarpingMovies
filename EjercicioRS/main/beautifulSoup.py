@@ -20,15 +20,17 @@ def extraer_peliculas():
 
 def almacenar_bd():
     
-    ruta_carpeta_data = os.path.join(os.path.dirname(__file__), '..', 'data')
-    ruta_bd = os.path.join(ruta_carpeta_data, 'peliculas.db')
+    ruta_carpeta_data = os.path.join(os.path.dirname(__file__), '..')
+    ruta_bd = os.path.join(ruta_carpeta_data, 'db.sqlite3')
     conn = sqlite3.connect(ruta_bd)
     conn.text_factory = str  # para evitar problemas con el conjunto de caracteres que maneja la BD
-    conn.execute("DROP TABLE IF EXISTS PELICULAS") 
-    conn.execute('''CREATE TABLE PELICULAS
-       (TITULO          TEXT    NOT NULL,
+    conn.execute("DROP TABLE IF EXISTS main_pelicula") 
+    conn.execute('''CREATE TABLE main_pelicula
+       (IDPELICULA      INTEGER PRIMARY KEY AUTOINCREMENT,
+        TITULO          TEXT    NOT NULL,
         IMAGEN        TEXT    ,
        DESCRIPCION      TEXT  ,
+        NOTA          INTEGER,
        GENERO        TEXT   ,
        DATE        TEXT,
        LINK        TEXT NOT NULL,
@@ -46,6 +48,7 @@ def almacenar_bd():
         datos_pelicula = requests.get(link, cookies=cookies).text
         s = BeautifulSoup(datos_pelicula, "lxml")
         descripcion = s.find("div", class_="overview").p.string
+        nota = s.find("div", class_="nota").span.text.split(" ")[0]
         idiomas = []
         language_selector = s.find_all("div", class_="languageSelector")
         for selector in language_selector:
@@ -57,8 +60,8 @@ def almacenar_bd():
                     idiomas.append(data_lang)
         idiomas = ','.join(idiomas)
 
-        print(titulo, imagen, descripcion, genero, date, link, idiomas)
-        conn.execute("""INSERT INTO PELICULAS VALUES (?,?,?,?,?,?,?)""",(titulo, imagen, descripcion, genero, date, link, idiomas))
+        print(titulo, imagen, descripcion, nota, genero, date, link, idiomas)
+        conn.execute("""INSERT INTO main_pelicula VALUES (?,?,?,?,?,?,?,?,?)""",(None,titulo, imagen, descripcion, nota, genero, date, link, idiomas))
     conn.commit()
     conn.close()
 

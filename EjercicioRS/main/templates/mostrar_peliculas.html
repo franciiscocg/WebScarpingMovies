@@ -1,0 +1,34 @@
+{% extends 'master.html' %}
+{% block titulo %} Películas en la Base de Datos {% endblock %}
+
+{% block contenido %}
+    <h3>Lista de Películas</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Imagen</th>
+                <th>Descripción</th>
+                <th>Nota</th>
+                <th>Género</th>
+                <th>Fecha</th>
+                <th>Link</th>
+                <th>Idiomas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pelicula in peliculas %}
+            <tr>
+                <td>{{ pelicula.0 }}</td>
+                <td><img src="{{ pelicula.1 }}" alt="Imagen de {{ pelicula.0 }}" width="100"></td>
+                <td>{{ pelicula.2 }}</td>
+                <td>{{ pelicula.3 }} / 10</td>
+                <td>{{ pelicula.4 }}</td>
+                <td>{{ pelicula.5 }}</td>
+                <td><a href="{{ pelicula.6 }}" target="_blank">Ver</a></td>
+                <td>{{ pelicula.7 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
