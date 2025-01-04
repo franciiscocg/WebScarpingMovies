@@ -3,14 +3,7 @@ from web import login
 import requests
 import sqlite3
 from bs4 import BeautifulSoup
-import urllib.request
-from tkinter import *
-from tkinter import messagebox
-import re
 import os, ssl
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -26,7 +19,10 @@ def extraer_peliculas():
     return l
 
 def almacenar_bd():
-    conn = sqlite3.connect('as.db')
+    
+    ruta_carpeta_data = os.path.join(os.path.dirname(__file__), '..', 'data')
+    ruta_bd = os.path.join(ruta_carpeta_data, 'peliculas.db')
+    conn = sqlite3.connect(ruta_bd)
     conn.text_factory = str  # para evitar problemas con el conjunto de caracteres que maneja la BD
     conn.execute("DROP TABLE IF EXISTS PELICULAS") 
     conn.execute('''CREATE TABLE PELICULAS
@@ -37,7 +33,9 @@ def almacenar_bd():
        DATE        TEXT,
        LINK        TEXT NOT NULL,
        IDIOMAS     TEXT);''')
+    
     l = extraer_peliculas()
+
     for p in l:
         titulo = p.find("h3").string
         link = "https://playdede.me/" + p.find("a")["href"]
@@ -62,8 +60,6 @@ def almacenar_bd():
         print(titulo, imagen, descripcion, genero, date, link, idiomas)
         conn.execute("""INSERT INTO PELICULAS VALUES (?,?,?,?,?,?,?)""",(titulo, imagen, descripcion, genero, date, link, idiomas))
     conn.commit()
-    cursor = conn.execute("SELECT COUNT(*) FROM PELICULAS")
-    messagebox.showinfo( "Base Datos", "Base de datos creada correctamente \nHay " + str(cursor.fetchone()[0]) + " registros")
     conn.close()
 
 if __name__ == "__main__":
