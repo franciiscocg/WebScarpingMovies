@@ -1,5 +1,4 @@
 from selenium import webdriver
-import requests
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -22,6 +21,10 @@ def login():
   WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "carousel")))
   driver.find_element(By.CSS_SELECTOR, "#menu-item-6892 > a").click()
   cookies= driver.get_cookie("PLAYDEDE_SESSION")["value"], driver.get_cookie("cf_clearance")["value"], driver.get_cookie("utoken")["value"]
-  return cookies
+  driver.quit()
+  headers = {'PLAYDEDE_SESSION': cookies[0],
+             'cf_clearance': cookies[1],
+             'utoken': cookies[2]}
+  return headers
 
 
