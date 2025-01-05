@@ -4,6 +4,7 @@ import requests
 import sqlite3
 from bs4 import BeautifulSoup
 import os, ssl
+from datetime import datetime
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -19,7 +20,8 @@ def extraer_peliculas():
     return l
 
 def almacenar_bd():
-    
+
+    lista = []
     ruta_carpeta_data = os.path.join(os.path.dirname(__file__), '..')
     ruta_bd = os.path.join(ruta_carpeta_data, 'db.sqlite3')
     conn = sqlite3.connect(ruta_bd)
@@ -30,9 +32,9 @@ def almacenar_bd():
         TITULO          TEXT    NOT NULL,
         IMAGEN        TEXT    ,
        DESCRIPCION      TEXT  ,
-        NOTA          INTEGER,
+        NOTA          REAL    ,
        GENERO        TEXT   ,
-       DATE        TEXT,
+       DATE        DATE    ,
        LINK        TEXT NOT NULL,
        IDIOMAS     TEXT);''')
     
@@ -43,8 +45,10 @@ def almacenar_bd():
         link = "https://playdede.me/" + p.find("a")["href"]
         imagen = p.find("img")["src"]
         genero = p.find("div", class_="data").span.string
+        if genero !=None:
+            genero = genero.replace(" /", ",")
         date = p.find("div", class_="data").p.string
-
+        date = formatear_fecha(date)
         datos_pelicula = requests.get(link, cookies=cookies).text
         s = BeautifulSoup(datos_pelicula, "lxml")
         descripcion = s.find("div", class_="overview").p.string
@@ -60,10 +64,20 @@ def almacenar_bd():
                     idiomas.append(data_lang)
         idiomas = ','.join(idiomas)
 
-        print(titulo, imagen, descripcion, nota, genero, date, link, idiomas)
+        lista.append((titulo, descripcion, float(nota), genero, date, idiomas))
         conn.execute("""INSERT INTO main_pelicula VALUES (?,?,?,?,?,?,?,?,?)""",(None,titulo, imagen, descripcion, nota, genero, date, link, idiomas))
+        
+
     conn.commit()
     conn.close()
+    return lista
+
+def formatear_fecha(fecha):
+    fecha = fecha.replace("Dic.", "12").replace("Ene.", "01").replace("Feb.", "02").replace("Mar.", "03").replace("Abr.", "04").replace("May.", "05").replace("Jun.", "06").replace("Jul.", "07").replace("Ago.", "08").replace("Sep.", "09").replace("Oct.", "10").replace("Nov.", "11")
+    fecha = fecha.replace(",", "")
+    fecha = datetime.strptime(fecha, "%m %d %Y")
+    return fecha
+   
 
 if __name__ == "__main__":
     almacenar_bd()

@@ -14,7 +14,7 @@ class Ocupacion(models.Model):
         ordering = ('nombre', )
 
 class Usuario(models.Model):
-    idUsuario = models.TextField(primary_key=True)
+    idUsuario = models.AutoField(primary_key=True)
     edad = models.IntegerField(verbose_name='Edad', help_text='Debe introducir una edad')
     sexo = models.CharField(max_length=1, verbose_name='Sexo', help_text='Debe elegir entre M o F')
     ocupacion = models.ForeignKey(Ocupacion, on_delete=models.SET_NULL, null=True)
@@ -27,18 +27,25 @@ class Usuario(models.Model):
         ordering = ('idUsuario', )
 
 class Genero(models.Model):
-    idGenero = models.TextField(primary_key=True)
-    nombre = models.TextField(verbose_name='Genero')
-
+    GENEROS_CHOICES = [
+        'Acción', 'Animación', 'Misterio', 'Bélica', 'Ciencia ficción', 'Comedia', 
+        'Crimen', 'Drama', 'Suspense', 'Familia', 'Música', 'Romance', 'Terror', 
+        'Western', 'Documental'
+    ]
+    idGenero = models.AutoField(primary_key=True)
+    nombre = models.TextField(unique=True)
     def __str__(self):
         return self.nombre
     
     class Meta:
         ordering =('nombre', )
 
+
 class Idioma(models.Model):
-    idIdioma = models.TextField(primary_key=True)
-    nombre = models.TextField(verbose_name='Idioma')
+    IDIOMAS_CHOICES = ['esp', 'espsub', 'lat', 'engsub', 'eng']
+    idIdioma = models.AutoField(primary_key=True)
+    nombre = models.TextField(max_length=10,unique=True)
+    
 
     def __str__(self):
         return self.nombre
@@ -52,10 +59,10 @@ class Pelicula(models.Model):
     imagen = models.URLField()
     descripcion = models.TextField()
     nota = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(10)])
-    generos = models.ManyToManyField(Genero)
+    generos = models.TextField()
     date = models.DateField()
     link = models.URLField()
-    idiomas = models.ManyToManyField(Idioma)
+    idiomas = models.TextField()
     puntuaciones = models.ManyToManyField(Usuario, through='Puntuacion')
 
     def __str__(self):
