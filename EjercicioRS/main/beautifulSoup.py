@@ -1,5 +1,5 @@
 #encoding:utf-8
-from web import login
+from main.web import login
 import requests
 import sqlite3
 from bs4 import BeautifulSoup
@@ -78,6 +78,3 @@ def formatear_fecha(fecha):
     fecha = datetime.strptime(fecha, "%m %d %Y")
     return fecha
    
-
-if __name__ == "__main__":
-    almacenar_bd()
