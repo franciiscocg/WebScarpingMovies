@@ -6,6 +6,7 @@
 
 {% block contenido %}
 <style>
+  
 @import url(https://fonts.googleapis.com/css2?family=Lato&display=swap);
 
 @import url(https://fonts.googleapis.com/css2?family=Open+Sans&display=swap);
@@ -527,13 +528,98 @@ video {
     text-align: left;
   }
 }
+.container {
+    width: 100%;
+    height: 100%;
+    --s: 200px; /* Control size */
+    --c1: #121212; /* Deep black for main background */
+    --c2: #2a2a2a; /* Medium-dark gray */
+    --c3: #3a3a3a; /* Light gray for highlights */
+
+    background: repeating-conic-gradient(
+                from 30deg,
+                #0000 0 120deg,
+                var(--c3) 0 180deg
+            )
+            calc(0.5 * var(--s)) calc(0.5 * var(--s) * 0.577),
+        repeating-conic-gradient(
+            from 30deg,
+            var(--c1) 0 60deg,
+            var(--c2) 0 120deg,
+            var(--c3) 0 180deg
+        );
+    background-size: var(--s) calc(var(--s) * 0.577);
+    font-family: "Open Sans", sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--c1);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Links and buttons */
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Cards and containers */
+.bg-neutral-100 {
+    background-color: var(--c2);
+    color: #e0e0e0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4); /* Soft shadow */
+    border-radius: 8px;
+}
+
+.bg-neutral-100 h2 {
+    color: #ffffff;
+}
+
+/* Highlighting important text */
+strong {
+    color: var(--accent);
+}
+
+/* Images */
+img {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Adjust grid for dark mode */
+.grid {
+    gap: 16px;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+.main-container {
+    display: flex;
+    flex-direction: column; /* Apilar elementos verticalmente */
+    justify-content: center; /* Centrar verticalmente */
+    align-items: center; /* Centrar horizontalmente */
+    height: 80vh; /* Tomar toda la altura de la pantalla */
+    width: 99vw; /* Tomar todo el ancho de la pantalla */
+  }
 
 
 </style>
+<body class="container">
+<div style="width: 80%; margin-left: 10%; margin-right: 10%;">
 
 <div id="webcrumbs">
     <div class="w-[1200px] bg-white shadow-lg rounded-lg p-8">
-      <h1 class="text-2xl font-title text-neutral-950 mb-6">Buscador de Películas</h1>
+      <h1 class="text-2xl font-title text-neutral-950 mb-6 text-justify">Buscador de Películas</h1>
       <form action="{% url 'buscar_titulo_o_descripcion' %}" method="POST" class="flex flex-col gap-6">
         {% csrf_token %}
         <div class="flex items-center gap-4">
@@ -646,9 +732,10 @@ video {
           Buscar
         </button>
       </form>
+      <h2 class="text-lg font-title text-neutral-950 mb-4">Resultados</h2>
       {% for pelicula in peliculas %}
       <div class="mt-8">
-        <h2 class="text-lg font-title text-neutral-950 mb-4">Resultados</h2>
+
         <ul class="flex flex-col gap-4">
           <li class="border border-neutral-300 rounded-md p-4">
             <p class="text-neutral-950 font-semibold">{{ pelicula.0 }}</p>
@@ -667,5 +754,7 @@ video {
       {% endfor %}
     </div>
   </div>
+</div>
+</body>
   
 {% endblock %}
