@@ -59,7 +59,7 @@ class Pelicula(models.Model):
     imagen = models.URLField()
     descripcion = models.TextField()
     nota = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(10)])
-    generos = models.TextField()
+    genero = models.TextField()
     date = models.DateField()
     link = models.URLField()
     idiomas = models.TextField()

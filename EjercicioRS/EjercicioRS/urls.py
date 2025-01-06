@@ -9,5 +9,6 @@ urlpatterns = [
     path('crear_index/', views.crear_index, name='crear_index'),
     path('buscar_titulo_o_descripcion/', views.buscar_titulo_o_descripcion, name='buscar_titulo_o_descripcion'),
     path('buscar_similares_generos/', views.buscar_similares_generos, name='buscar_similares_generos'),
+    path('rate_pelicula/<int:pelicula_id>/', views.rate_pelicula, name='rate_pelicula'),
     path('', views.home, name='home')
     ]

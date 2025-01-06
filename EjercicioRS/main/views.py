@@ -1,8 +1,10 @@
 #encoding:utf-8
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.db import connection
 from main.busquedaWoosh import *
 from django.core.paginator import Paginator
+from .models import Pelicula, Puntuacion, Usuario
 GENEROS_CHOICES = [
         'Acción', 'Animación', 'Misterio', 'Bélica', 'Ciencia ficción', 'Comedia', 
         'Crimen', 'Drama', 'Suspense', 'Familia', 'Música', 'Romance', 'Terror', 
@@ -68,6 +70,19 @@ def buscar_similares_generos(request):
                     peliculas = cursor.fetchall()
 
     return render(request, 'buscador_similares.html', {'peliculas': peliculas})
+
+@login_required
+def rate_pelicula(request, pelicula_id):
+    pelicula = get_object_or_404(Pelicula, idPelicula=pelicula_id)
+    usuario = get_object_or_404(Usuario, idUsuario=request.user.id)
+    if request.method == 'POST':
+        puntuacion = int(request.POST.get('puntuacion'))
+        ratings = Puntuacion.objects.filter(idUsuario=usuario, idPelicula=pelicula)
+        if ratings.exists():
+            ratings.update(puntuacion=puntuacion)
+        else:
+            Puntuacion.objects.create(idUsuario=usuario, idPelicula=pelicula, puntuacion=puntuacion)
+    return redirect('mostrar_peliculas')
 
 def home(request):
     return render(request, 'home.html')

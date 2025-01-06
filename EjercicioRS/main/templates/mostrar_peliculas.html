@@ -576,20 +576,26 @@ video {
                     <h2 class="text-lg font-bold text-neutral-950">{{ pelicula.1 }}</h2>
                     <p class="text-neutral-950">{{ pelicula.3 }}</p>
                     <p class="text-neutral-950">
-                        <strong>Note:</strong> {{ pelicula.4 }} /10
+                        <strong>Nota:</strong> {{ pelicula.4 }} /10
                     </p>
                     <p class="text-neutral-950">
-                        <strong>Genre:</strong> {{ pelicula.5 }}
+                        <strong>Genero:</strong> {{ pelicula.5 }}
                     </p>
                     <p class="text-neutral-950">
-                        <strong>Release Date:</strong> {{ pelicula.6 }}
+                        <strong>Estreno:</strong> {{ pelicula.6 }}
                     </p>
                     <p class="text-neutral-950">
-                        <strong>Languages:</strong> {{ pelicula.8 }}
+                        <strong>Idiomas:</strong> {{ pelicula.8 }}
                     </p>
                     <a href="{{ pelicula.7 }}" class="text-primary-500 underline">
-                        See more
+                        Ver mas
                     </a>
+                    <form method="post" action="{% url 'rate_pelicula' pelicula.0 %}">
+                      {% csrf_token %}
+                      <label for="puntuacion">Puntuación:</label>
+                      <input type="number" id="idPelicula" name="puntuacion" min="1" max="5">
+                      <button type="submit">Enviar Puntuación</button>
+                  </form>
                 </div>
                 {% endfor %}
             </div>
