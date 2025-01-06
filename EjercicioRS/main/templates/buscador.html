@@ -1,0 +1,51 @@
+{% extends 'master.html' %}
+
+{% block titulo %} Buscador {% endblock %}
+
+
+
+{% block contenido %} 
+<form action="{% url 'buscar_titulo_o_descripcion' %}" method="POST">
+    {% csrf_token %}
+    <input type="text" name="query" placeholder="Buscar por título o descripción">
+    <select name="idioma">
+        <option value="">Todos los idiomas</option>
+        <option value="esp">Español</option>
+        <option value="lat">Latino</option>
+        <option value="subesp">Subtítulos Español</option>
+    </select>
+    <select name="genero" multiple>
+        {% for genero in generos %}
+        <option value="{{ genero }}">{{ genero }}</option>
+        {% endfor %}
+    </select>
+    <p>Presiona Ctrl (Windows) o Cmd (Mac) para seleccionar varios géneros</p>
+    <input type="number" step="0.1" name="min_nota" placeholder="Nota mínima (0-10)">
+    <input type="number" step="0.1" name="max_nota" placeholder="Nota máxima (0-10)">
+    <button type="submit">Buscar</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Nota</th>
+            <th>Género</th>
+            <th>Fecha</th>
+            <th>Idiomas</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pelicula in peliculas %}
+        <tr>
+            <td>{{ pelicula.0 }}</td>
+            <td>{{ pelicula.1 }}</td>
+            <td>{{ pelicula.2 }} / 10</td>
+            <td>{{ pelicula.3 }}</td>
+            <td>{{ pelicula.4 }}</td>
+            <td>{{ pelicula.5 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

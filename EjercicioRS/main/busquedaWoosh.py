@@ -4,7 +4,7 @@ from datetime import datetime
 from whoosh.index import create_in,open_dir
 from whoosh.fields import Schema, NUMERIC, TEXT, KEYWORD, DATETIME
 from whoosh.qparser import QueryParser, MultifieldParser
-from whoosh import qparser, query
+from whoosh.query import Term, NumericRange, And, Or
 from main.beautifulSoup import almacenar_bd
 
 index_dir = os.path.join("EjercicioRS", "Index")
@@ -36,43 +36,47 @@ def crea_index():
     writer.commit()  
 
     
-def titulo_o_descripcion(palabra):
+def filtrar_peliculas(busqueda, idioma, generos, min_nota, max_nota):
     ix = open_dir(index_dir)
     with ix.searcher() as searcher:
-        query = MultifieldParser(["titulo", "descripcion"], ix.schema).parse(palabra)
-        results = searcher.search(query)
-        result_list = []
-        for result in results:
-            result_list.append(result)
-        return result_list
+        # Crear consultas
+        query_parts = []
 
-def genero(palabra):
-    ix = open_dir(index_dir)
-    with ix.searcher() as searcher:
-        query = QueryParser("genero", ix.schema).parse(palabra)
-        results = searcher.search(query)
-        result_list = []
-        for result in results:
-            result_list.append(result)
-        return result_list
-    
-def nota(nota):
-    ix = open_dir(index_dir)
-    with ix.searcher() as searcher:
-        query = QueryParser("nota", ix.schema).parse(nota)
-        results = searcher.search(query)
-        result_list = []
-        for result in results:
-            result_list.append(result)
-        return result_list
+        # Búsqueda general (título o descripción)
+        if busqueda:
+            query_parts.append(
+                MultifieldParser(["titulo", "descripcion"], ix.schema).parse(f"{busqueda}*")
+            )
 
-def idioma(palabra):
-    ix = open_dir(index_dir)
-    with ix.searcher() as searcher:
-        query = QueryParser("idioma", ix.schema).parse(palabra)
-        results = searcher.search(query)
+        # Filtro de idioma
+        if idioma in ['esp', 'espsub', 'lat', 'engsub', 'eng']:
+            query_parts.append(Term("idioma", idioma))
+
+        if generos:
+            genero_queries = [Term("genero", genero) for genero in generos]
+            query_parts.append(Or(genero_queries))
+
+        # Filtro de rango de valoración
+        if min_nota or max_nota:
+            min_val = float(min_nota) if min_nota else 0.0
+            max_val = float(max_nota) if max_nota else 10.0
+            query_parts.append(NumericRange("nota", min_val, max_val))
+
+        # Combinar todas las consultas
+        final_query = And(query_parts) if query_parts else None
+
+        # Realizar la búsqueda
+        results = searcher.search(final_query, limit=50) if final_query else []
+
+        # Construir la lista de resultados
         result_list = []
         for result in results:
-            result_list.append(result)
-        return result_list 
-        
+            result_list.append([
+                result.get("titulo", ""),
+                result.get("descripcion", ""),
+                result.get("nota", ""),
+                result.get("genero", ""),
+                result.get("date", ""),
+                result.get("idioma", ""),
+            ])
+        return result_list

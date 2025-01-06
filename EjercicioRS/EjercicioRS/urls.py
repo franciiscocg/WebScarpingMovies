@@ -7,4 +7,5 @@ urlpatterns = [
     path('mostrar_peliculas/', views.mostrar_peliculas, name='mostrar_peliculas'),
     path('cargar_index_y_BD/', views.cargar_index_y_BD, name='cargar_index_y_BD'),
     path('crear_index/', views.crear_index, name='crear_index'),
+    path('buscar_titulo_o_descripcion/', views.buscar_titulo_o_descripcion, name='buscar_titulo_o_descripcion'),
     ]
