@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from django.db import connection
 from main.busquedaWoosh import *
+from django.core.paginator import Paginator
 GENEROS_CHOICES = [
         'Acción', 'Animación', 'Misterio', 'Bélica', 'Ciencia ficción', 'Comedia', 
         'Crimen', 'Drama', 'Suspense', 'Familia', 'Música', 'Romance', 'Terror', 
@@ -12,8 +13,12 @@ def mostrar_peliculas(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM main_pelicula")
         peliculas = cursor.fetchall()
+        paginator = Paginator(peliculas, 21)  # Muestra 10 películas por página
+
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
     
-    return render(request, 'mostrar_peliculas.html', {'peliculas': peliculas})
+    return render(request, 'mostrar_peliculas.html', {'peliculas': page_obj})
 
 def cargar_index_y_BD(request):
     return render(request, 'index_cargar.html')
@@ -35,6 +40,7 @@ def buscar_titulo_o_descripcion(request):
         generos = [genero for genero in generos if genero in GENEROS_CHOICES]
 
         peliculas = filtrar_peliculas(busqueda, idioma, generos, min_nota, max_nota)
+
 
     return render(request, 'buscador.html', {'peliculas': peliculas, 'generos': GENEROS_CHOICES})
 
