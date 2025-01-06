@@ -10,5 +10,8 @@ urlpatterns = [
     path('buscar_titulo_o_descripcion/', views.buscar_titulo_o_descripcion, name='buscar_titulo_o_descripcion'),
     path('buscar_similares_generos/', views.buscar_similares_generos, name='buscar_similares_generos'),
     path('rate_pelicula/<int:pelicula_id>/', views.rate_pelicula, name='rate_pelicula'),
+     path('registro/', views.registro, name='registro'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
     path('', views.home, name='home')
     ]

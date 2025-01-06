@@ -5,6 +5,9 @@ from django.db import connection
 from main.busquedaWoosh import *
 from django.core.paginator import Paginator
 from .models import Pelicula, Puntuacion, Usuario
+from django.contrib.auth import login, authenticate, logout
+from .forms import RegistroForm, LoginForm
+
 GENEROS_CHOICES = [
         'Acción', 'Animación', 'Misterio', 'Bélica', 'Ciencia ficción', 'Comedia', 
         'Crimen', 'Drama', 'Suspense', 'Familia', 'Música', 'Romance', 'Terror', 
@@ -27,7 +30,7 @@ def cargar_index_y_BD(request):
 
 def crear_index(request):
     crea_index()
-    return render(request, 'index_cargar.html', {'peliculas': "peliculas cargadas satisdactoriamente"})
+    return render(request, 'index_cargar.html', {'peliculas': "peliculas cargadas satisfactoriamente"})
 
 def buscar_titulo_o_descripcion(request):
     peliculas = []
@@ -83,6 +86,38 @@ def rate_pelicula(request, pelicula_id):
         else:
             Puntuacion.objects.create(idUsuario=usuario, idPelicula=pelicula, puntuacion=puntuacion)
     return redirect('mostrar_peliculas')
+
+def registro(request):
+    if request.method == 'POST':
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = RegistroForm()
+    return render(request, 'registro.html', {'form': form})
+
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    return redirect('home')
 
 def home(request):
     return render(request, 'home.html')
