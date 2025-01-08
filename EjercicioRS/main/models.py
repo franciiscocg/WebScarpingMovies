@@ -26,7 +26,7 @@ class Usuario(models.Model):
         return self.idUsuario
     
     class Meta:
-        ordering = ('idUsuario', )
+        ordering = ('codigoPostal', )
 
 class Genero(models.Model):
     GENEROS_CHOICES = [

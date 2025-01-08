@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import connection
 from main.busquedaWoosh import *
 from django.core.paginator import Paginator
-from .models import Pelicula, Puntuacion, Usuario
+from .models import Pelicula, Puntuacion, Usuario, User
 from django.contrib.auth import login, authenticate, logout
 from .forms import RegistroForm, LoginForm
 
@@ -77,7 +77,7 @@ def buscar_similares_generos(request):
 @login_required
 def rate_pelicula(request, pelicula_id):
     pelicula = get_object_or_404(Pelicula, idPelicula=pelicula_id)
-    usuario = get_object_or_404(Usuario, idUsuario=request.user.id)
+    usuario = get_object_or_404(Usuario, user=request.user.id)
     if request.method == 'POST':
         puntuacion = int(request.POST.get('puntuacion'))
         ratings = Puntuacion.objects.filter(idUsuario=usuario, idPelicula=pelicula)

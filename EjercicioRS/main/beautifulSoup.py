@@ -28,6 +28,7 @@ def almacenar_bd():
     conn.text_factory = str  # para evitar problemas con el conjunto de caracteres que maneja la BD
     conn.execute("DROP TABLE IF EXISTS main_pelicula")
     conn.execute("DROP TABLE IF EXISTS main_puntuacion")
+    conn.execute("DROP TABLE IF EXISTS main_usuario")
     conn.execute('''CREATE TABLE main_pelicula
        (IDPELICULA      INTEGER PRIMARY KEY AUTOINCREMENT,
         TITULO          TEXT    NOT NULL,
@@ -45,7 +46,19 @@ def almacenar_bd():
           idUsuario_id          INTEGER    NOT NULL,
           PUNTUACION          INTEGER    NOT NULL,
           FOREIGN KEY (idPelicula_id) REFERENCES main_pelicula(IDPELICULA),
-          FOREIGN KEY (idUsuario_id) REFERENCES auth_user(id));''')
+          FOREIGN KEY (idUsuario_id) REFERENCES main_usuario(IDUSUARIO));''')
+    
+    conn.execute('''CREATE TABLE main_usuario
+            (IDUSUARIO     INTEGER PRIMARY KEY AUTOINCREMENT,
+            USER         INTEGER    ,
+            user_id     INTEGER    ,
+            EDAD          INTEGER    ,
+            SEXO          TEXT    ,
+            OCUPACION_ID          INTEGER    ,
+            CODIGOPOSTAL          TEXT    ,
+            FOREIGN KEY (user_id) REFERENCES auth_user(id),
+            FOREIGN KEY (OCUPACION_ID) REFERENCES main_ocupacion(OCUPACIONID));''')
+                 
     
     l = extraer_peliculas()
 
