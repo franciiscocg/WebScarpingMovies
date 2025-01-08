@@ -19,3 +19,8 @@ class RegistroForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label='Username', max_length=100)
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
+
+class EditarUsuarioForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['edad', 'sexo', 'ocupacion', 'codigoPostal']

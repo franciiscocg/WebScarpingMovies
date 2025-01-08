@@ -474,6 +474,7 @@ video {
 				        <li><a href="/buscar_similares_generos">Mostrar Pel&iacute;culas similares a una</a></li>
 				        <li><a href="/buscar_titulo_o_descripcion">Buscar titulo o descripcion </a></li>
                 {% if user.is_authenticated %}
+                  <li><a href="/editar_usuario">Perfil</a></li>
                   <li><a href="/logout">Cerrar Sesi&oacute;n</a></li>
                 {% else %}
                   <li><a href="/login">Iniciar Sesi&oacute;n</a></li>

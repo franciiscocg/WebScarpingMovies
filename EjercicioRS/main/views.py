@@ -119,5 +119,21 @@ def user_logout(request):
     logout(request)
     return redirect('home')
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import EditarUsuarioForm
+
+@login_required
+def editar_usuario(request):
+    usuario = request.user.usuario
+    if request.method == 'POST':
+        form = EditarUsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = EditarUsuarioForm(instance=usuario)
+    return render(request, 'editar_usuario.html', {'form': form})
+
 def home(request):
     return render(request, 'home.html')
