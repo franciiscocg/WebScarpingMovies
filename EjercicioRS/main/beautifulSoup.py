@@ -40,12 +40,12 @@ def almacenar_bd():
        IDIOMAS     TEXT);''')
     
     conn.execute('''CREATE TABLE main_puntuacion
-         (IDPUNTUACION      INTEGER PRIMARY KEY AUTOINCREMENT,
-          IDPELICULA          INTEGER    NOT NULL,
-          IDUSUARIO          INTEGER    NOT NULL,
+         (ID     INTEGER PRIMARY KEY AUTOINCREMENT,
+          idPelicula_id          INTEGER    NOT NULL,
+          idUsuario_id          INTEGER    NOT NULL,
           PUNTUACION          INTEGER    NOT NULL,
-          FOREIGN KEY (IDPELICULA) REFERENCES main_pelicula(IDPELICULA),
-          FOREIGN KEY (IDUSUARIO) REFERENCES auth_user(id));''')
+          FOREIGN KEY (idPelicula_id) REFERENCES main_pelicula(IDPELICULA),
+          FOREIGN KEY (idUsuario_id) REFERENCES auth_user(id));''')
     
     l = extraer_peliculas()
 
