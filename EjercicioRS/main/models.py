@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 class Ocupacion(models.Model):
     ocupacionId = models.AutoField(primary_key=True)
@@ -15,6 +16,7 @@ class Ocupacion(models.Model):
 
 class Usuario(models.Model):
     idUsuario = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     edad = models.IntegerField(verbose_name='Edad', help_text='Debe introducir una edad')
     sexo = models.CharField(max_length=1, verbose_name='Sexo', help_text='Debe elegir entre M o F')
     ocupacion = models.ForeignKey(Ocupacion, on_delete=models.SET_NULL, null=True)
