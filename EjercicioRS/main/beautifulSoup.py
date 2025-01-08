@@ -26,7 +26,8 @@ def almacenar_bd():
     ruta_bd = os.path.join(ruta_carpeta_data, 'db.sqlite3')
     conn = sqlite3.connect(ruta_bd)
     conn.text_factory = str  # para evitar problemas con el conjunto de caracteres que maneja la BD
-    conn.execute("DROP TABLE IF EXISTS main_pelicula") 
+    conn.execute("DROP TABLE IF EXISTS main_pelicula")
+    conn.execute("DROP TABLE IF EXISTS main_puntuacion")
     conn.execute('''CREATE TABLE main_pelicula
        (IDPELICULA      INTEGER PRIMARY KEY AUTOINCREMENT,
         TITULO          TEXT    NOT NULL,
@@ -37,6 +38,14 @@ def almacenar_bd():
        DATE        DATE    ,
        LINK        TEXT NOT NULL,
        IDIOMAS     TEXT);''')
+    
+    conn.execute('''CREATE TABLE main_puntuacion
+         (IDPUNTUACION      INTEGER PRIMARY KEY AUTOINCREMENT,
+          IDPELICULA          INTEGER    NOT NULL,
+          IDUSUARIO          INTEGER    NOT NULL,
+          PUNTUACION          INTEGER    NOT NULL,
+          FOREIGN KEY (IDPELICULA) REFERENCES main_pelicula(IDPELICULA),
+          FOREIGN KEY (IDUSUARIO) REFERENCES auth_user(id));''')
     
     l = extraer_peliculas()
 
