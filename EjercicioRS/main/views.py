@@ -6,7 +6,8 @@ from main.busquedaWoosh import *
 from django.core.paginator import Paginator
 from .models import Pelicula, Puntuacion, Usuario, User
 from django.contrib.auth import login, authenticate, logout
-from .forms import RegistroForm, LoginForm
+from .forms import RegistroForm, LoginForm, EditarUsuarioForm
+
 
 GENEROS_CHOICES = [
         'Acción', 'Animación', 'Misterio', 'Bélica', 'Ciencia ficción', 'Comedia', 
@@ -119,10 +120,6 @@ def user_logout(request):
     logout(request)
     return redirect('home')
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import EditarUsuarioForm
-
 @login_required
 def editar_usuario(request):
     usuario = request.user.usuario
@@ -137,3 +134,41 @@ def editar_usuario(request):
 
 def home(request):
     return render(request, 'home.html')
+
+from django.db.models import F, Value, FloatField, ExpressionWrapper, Avg
+
+def mostrar_usuarios_similares(request):
+    usuario = get_object_or_404(Usuario, user_id=request.user.id)
+
+    # Asignar pesos a cada criterio
+    peso_edad = 0.4
+    peso_sexo = 0.2
+    peso_ocupacion = 0.3
+    peso_codigo_postal = 0.1
+
+    # Calcular la similitud ponderada
+    usuarios_similares = Usuario.objects.annotate(
+        similitud=ExpressionWrapper(
+            (Value(peso_edad, output_field=FloatField()) * (F('edad') == usuario.edad)) +
+            (Value(peso_sexo, output_field=FloatField()) * (F('sexo') == usuario.sexo)) +
+            (Value(peso_ocupacion, output_field=FloatField()) * (F('ocupacion') == usuario.ocupacion)) +
+            (Value(peso_codigo_postal, output_field=FloatField()) * (F('codigoPostal') == usuario.codigoPostal)),
+            output_field=FloatField()
+        )
+    ).exclude(user_id=usuario.user_id).order_by('-similitud')
+
+    # Obtener las películas puntuadas por los usuarios similares
+    peliculas_recomendadas = Puntuacion.objects.filter(
+        idUsuario__in=usuarios_similares
+    ).values('idPelicula').annotate(promedio_puntuacion=Avg('puntuacion')).order_by('-promedio_puntuacion')
+
+    peliculas = Pelicula.objects.filter(idPelicula__in=[p['idPelicula'] for p in peliculas_recomendadas])
+
+    return render(request, 'recomendar_peliculas_usuarios.html', {
+        'usuarios': usuarios_similares,
+        'usuario': usuario,
+        'peliculas': peliculas,
+        'peliculas_recomendadas': peliculas_recomendadas
+    })
+
+
