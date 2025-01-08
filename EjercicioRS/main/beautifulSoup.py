@@ -12,12 +12,14 @@ getattr(ssl, '_create_unverified_context', None)):
 cookies = login()
 
 def extraer_peliculas():
-    
-    url = "https://playdede.me/peliculas/1"
-    response = requests.get(url, cookies=cookies).text
-    s = BeautifulSoup(response, "lxml")
-    l = s.find_all("article", class_="item tvshows", id=True)
-    return l
+    peliculas = []
+    for i in range(1, 3):  # Ajusta el rango según sea necesario
+        url = f"https://playdede.me/peliculas/{i}"
+        response = requests.get(url, cookies=cookies).text
+        s = BeautifulSoup(response, "lxml")
+        l = s.find_all("article", class_="item tvshows", id=True)
+        peliculas.extend(l)
+    return peliculas
 
 def almacenar_bd():
 
@@ -36,7 +38,7 @@ def almacenar_bd():
        DESCRIPCION      TEXT  ,
         NOTA          REAL    ,
        GENERO        TEXT   ,
-       DATE        DATE    ,
+       DATE        DATETIME    ,
        LINK        TEXT NOT NULL,
        IDIOMAS     TEXT);''')
     

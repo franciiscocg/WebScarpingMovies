@@ -574,7 +574,12 @@ video {
                 <div class="bg-neutral-100 rounded-md p-4 flex flex-col gap-4">
                     <img src="{{ pelicula.2 }}" alt="Movie" class="w-full h-[200px] object-cover rounded-md"/>
                     <h2 class="text-lg font-bold text-neutral-950">{{ pelicula.1 }}</h2>
+                    {% if pelicula.3 == None %}
+                    <p class="text-neutral-700">Sin descripción</p>
+                    {% else %}
                     <p class="text-neutral-950">{{ pelicula.3 }}</p>
+                    {% endif %}
+
                     <p class="text-neutral-950">
                         <strong>Nota:</strong> {{ pelicula.4 }} /10
                     </p>

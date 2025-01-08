@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from .models import Pelicula, Puntuacion, Usuario, User
 from django.contrib.auth import login, authenticate, logout
 from .forms import RegistroForm, LoginForm, EditarUsuarioForm
+from django.db.models import F, Value, FloatField, ExpressionWrapper, Avg
 
 
 GENEROS_CHOICES = [
@@ -23,8 +24,9 @@ def mostrar_peliculas(request):
 
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-    
+
     return render(request, 'mostrar_peliculas.html', {'peliculas': page_obj})
+
 
 def cargar_index_y_BD(request):
     return render(request, 'index_cargar.html')
@@ -134,8 +136,6 @@ def editar_usuario(request):
 
 def home(request):
     return render(request, 'home.html')
-
-from django.db.models import F, Value, FloatField, ExpressionWrapper, Avg
 
 def mostrar_usuarios_similares(request):
     usuario = get_object_or_404(Usuario, user_id=request.user.id)
