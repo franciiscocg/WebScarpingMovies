@@ -2,3 +2,5 @@ selenium
 lxml
 requests
 Django
+whoosh
+beautifulsoup4
